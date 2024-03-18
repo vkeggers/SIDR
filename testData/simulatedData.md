@@ -102,17 +102,6 @@ gunzip HIFIecoli.fastq.gz
 cat HIFIelegans.fastq HIFIecoli.fastq > HIFItestData.fastq
 ```
 
-JUST KIDDING :<
-
-When you go to assemble this the assembly is only 20M with 2 contigs??? Let's try using less ecoli sequences by using seqtk to take 100 random sequences:
-
-```
-module load seqtk-1.3
-seqtk sample -s100 HIFIecoli.fastq 100 > subsetHIFIecoli.fastq
-```
-
-OKAY, that didn't work either. Let's try running hifiasm on just the elegans HIFI reads rather than the concatenated reads.
-
 </details>
 
 
@@ -247,4 +236,37 @@ Again concatenate this with the ecoli data.
 </details>
 
 
+### Can we make contaminated assemblies?
 
+<details>
+<summary>hifiasm</summary>
+
+JUST KIDDING :<
+
+When you go to assemble this the assembly is only 20M with 2 contigs??? Let's try using less ecoli sequences by using seqtk to take 100 random sequences:
+
+```
+module load seqtk-1.3
+seqtk sample -s100 HIFIecoli.fastq 100 > subsetHIFIecoli.fastq
+```
+
+OKAY, that didn't work either. 15M file, 1 sequence. Let's try running hifiasm on just the elegans HIFI reads rather than the concatenated reads.
+
+WELP, same result, 15M file, 1 sequence.
+
+Try regenerating HIFI data?
+
+</details>
+
+
+<details>
+<summary>flye with canu correct</summary>
+  
+</details>
+
+
+
+<details>
+<summary>nextdenovo</summary>
+  
+</details>
