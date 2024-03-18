@@ -118,12 +118,53 @@ OKAY, that didn't work either. Let's try running hifiasm on just the elegans HIF
 
 <details>
 <summary>ONT</summary>
-  
+
+The HIFI fastq files were made with the software [pbsim3](https://github.com/yukiteruono/pbsim3) with the high quality ONT model, generating reads with at least 90% accuracy. 
+
+```
+#!/bin/bash
+#SBATCH --account account_name
+#SBATCH --qos partition_name
+#SBATCH --partition partition_name
+#SBATCH --output=out_%pbsim.log
+
+module load pbsim3-3.0.4
+
+pbsim --strategy wgs \
+      --method qshmm \
+      --qshmm QSHMM-ONT-HQ.model \
+      --depth 60 \
+      --genome ./caenorhabditis_elegans.PRJNA13758.WBPS18.genomic.fa
+```
+
+repeat w/ e.coli genome and then concatenate all .fastq files together under ONTtestData.fastq
+
 </details>
 
 
 <details>
 <summary>Paired-end Illumina</summary>
+
+All Illumina data was generated using the software [ART](https://manpages.debian.org/testing/art-nextgen-simulation-tools/art_illumina.1.en.html), which was installed with the bioconda package.
+
+```
+#!/bin/bash
+
+#SBATCH --account account_name
+#SBATCH --qos partition_name
+#SBATCH --partition partition_name
+#SBATCH --output=out_art.log
+#SBATCH --mail-user=username@email.com   #use your own email
+#SBATCH --mail-type=ALL
+#SBATCH -n 8
+
+module load mamba/23.1.0-4
+source activate art
+
+art_illumina -sam -i caenorhabditis_elegans.PRJNA13758.WBPS18.genomic.fa -l 150 -p -nf 0 -f 60 -m 200 -s 10 -ss HS25 -o Illumina_elegans
+```
+
+repeat with ecoli and concatenate the Illumina_elegans1 with Illumina_ecoli1 and Illumina_elegans2 with Illumina_ecoli2
   
 </details>
 
@@ -147,6 +188,10 @@ As for the _E.coli_ the same GCF_000008865.2_ASM886v2_genomic.fna assembly file 
 
 <details>
 <summary>fastq generation</summary>
+
+Repeat of paired-end Illumina but this time usingcaenorhabditis_elegans.PRJNA13758.WBPS18.CDS_transcripts.fa instead of caenorhabditis_elegans.PRJNA13758.WBPS18.genomic.fa
+
+Again concatenate this with the ecoli data.
   
 </details>
 
