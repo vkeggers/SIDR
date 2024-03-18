@@ -102,6 +102,15 @@ gunzip HIFIecoli.fastq.gz
 cat HIFIelegans.fastq HIFIecoli.fastq > HIFItestData.fastq
 ```
 
+JUST KIDDING :<
+
+When you go to assemble this the assembly is only 20M with 2 contigs??? Let's try using less ecoli sequences by using seqtk to take 100 random sequences:
+
+```
+module load seqtk-1.3
+seqtk sample -s100 HIFIecoli.fastq 100 > subsetHIFIecoli.fastq
+```
+
 </details>
 
 
