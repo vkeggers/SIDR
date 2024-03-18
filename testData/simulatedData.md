@@ -41,6 +41,7 @@ rm -r ncbi_dataset
 
 <details>
 <summary>HIFI</summary>
+  
 The HIFI fastq files were made with the software [pbsim3](https://github.com/yukiteruono/pbsim3) in multipass mode.
 This creates a sam file which must be converted into a bam using the software [samtools](https://www.htslib.org/).
 This bam is then input into pacbio's [ccs](https://ccs.how/) software, which was installed with the bioconda package pbccs.
@@ -63,6 +64,7 @@ pbsim --strategy wgs \
       --genome /your/path/to/caenorhabditis_elegans.PRJNA13758.WBPS18.genomic.fa \
       --pass-num 10
 ```
+
 This will generate a sam file for each chromosome (for elegans it is 7, 6 plus mitochondria)
 
 
