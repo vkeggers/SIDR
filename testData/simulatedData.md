@@ -111,6 +111,8 @@ module load seqtk-1.3
 seqtk sample -s100 HIFIecoli.fastq 100 > subsetHIFIecoli.fastq
 ```
 
+OKAY, that didn't work either. Let's try running hifiasm on just the elegans HIFI reads rather than the concatenated reads.
+
 </details>
 
 
@@ -125,12 +127,12 @@ seqtk sample -s100 HIFIecoli.fastq 100 > subsetHIFIecoli.fastq
   
 </details>
 
-
-### RNA data acquisition and generating fastq:
+<details>
+<summary>RNA Illumina</summary>
 
 <details>
-<summary>Data</summary>
-
+<summary>Data acquisition</summary>
+  
 ```
 #from wormbase
 wget https://ftp.ebi.ac.uk/pub/databases/wormbase/parasite/releases/WBPS18/species/caenorhabditis_elegans/PRJNA13758/caenorhabditis_elegans.PRJNA13758.WBPS18.CDS_transcripts.fa.gz
@@ -139,14 +141,27 @@ gunzip caenorhabditis_elegans.PRJNA13758.WBPS18.CDS_transcripts.fa.gz
 
 As for the _E.coli_ the same GCF_000008865.2_ASM886v2_genomic.fna assembly file was used. 
 
+</details>
+
+
+
+<details>
+<summary>fastq generation</summary>
   
 </details>
 
 
 
+</details>
 
-<details>
-<summary>fastq</summary>
+
+
+
+
+
+
+  
+
   
 </details>
 
