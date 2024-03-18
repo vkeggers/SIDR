@@ -46,7 +46,7 @@ The HIFI fastq files were made with the software [pbsim3](https://github.com/yuk
 This creates a sam file which must be converted into a bam using the software [samtools](https://www.htslib.org/).
 This bam is then input into pacbio's [ccs](https://ccs.how/) software, which was installed with the bioconda package pbccs.
 
-Step 1: pbsim3
+**Step 1: pbsim3**
 
 ```
 #!/bin/bash
@@ -68,7 +68,7 @@ pbsim --strategy wgs \
 This will generate a sam file for each chromosome (for elegans it is 7, 6 plus mitochondria)
 
 
-Step2: samtools
+**Step 2: samtools**
 
 ```
 module load samtools-1.15.1-gcc-8.2.0
@@ -76,7 +76,7 @@ cat *.sam > HIFIelegans.sam   #concatenate all the sam files into one
 samtools view -b ./HIFIelegans.sam -o ./HIFIelegans.bam
 ```
 
-Step 3: ccs
+**Step 3: ccs**
 
 ```
 #!/bin/bash
@@ -91,10 +91,10 @@ source activate pbccs
 ccs HIFIelegans.bam HIFIelegans.fastq.gz
 ```
 
-Step 4: repeat pbsim3, samtools, ccs (steps 1-3) for ecoli, changing the genome from caenorhabditis_elegans.PRJNA13758.WBPS18.genomic.fa
+**Step 4: repeat** pbsim3, samtools, ccs (steps 1-3) for ecoli, changing the genome from caenorhabditis_elegans.PRJNA13758.WBPS18.genomic.fa
 to GCF_000008865.2_ASM886v2_genomic.fna and output file names from HIFIelegans to HIFIecoli
 
-Step 5: unzip and concatenate the fastq files together:
+**Step 5: unzip and concatenate the fastq files together:**
 
 ```
 gunzip HIFIelegans.fastq.gz
