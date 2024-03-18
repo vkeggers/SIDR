@@ -214,6 +214,9 @@ Again concatenate this with the ecoli data.
 
 ### Statistics for raw data calculated with fastqc:
 
+<details>
+<summary>TABLE 1: files and files sizes</summary>
+  
 | file | size | number of sequences |
 |------|------|---------------------|
 | caenorhabditis_elegans.PRJNA13758.WBPS18.genomic.fa | 98M | 7 |
@@ -226,6 +229,11 @@ Again concatenate this with the ecoli data.
 | IlluminaRNAtestData_1.fastq | 2.7G | 8,847,030 |
 | IlluminaRNAtestData_2.fastq | 2.7G | 8,847,030 |
 
+</details>
+
+<details>
+<summary>TABLE 2: Quality score, read lengths, and GC%</summary>
+
 | file | mean Phred Quality Score | shortest read | longest read | mean read length | GC% |
 |------|--------------------------|---------------|--------------|------------------|-----|
 | HIFItestData.fastq | 80 | 98 | 49,907 | 5000 | 39% |
@@ -235,6 +243,8 @@ Again concatenate this with the ecoli data.
 | IlluminaRNAtestData_1.fastq | 36 | 150 | 150 | 150 | 44% |
 | IlluminaRNAtestData_2.fastq | 36 | 150 | 150 | 150 | 44% |
 
+  
+</details>
 
 
 
