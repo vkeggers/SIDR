@@ -1,4 +1,4 @@
-<span style="color:red;">Reference assemblies for _Caenorhabditis_ and _E.coli_ used in generating test data:> </span>
+### Reference assemblies for _Caenorhabditis_ and _E.coli_ used in generating test data:
 
 1. caenorhabditis_elegans.PRJNA13758.WBPS18.genomic.fa.gz
 
