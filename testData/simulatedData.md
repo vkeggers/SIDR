@@ -71,9 +71,19 @@ This will generate a sam file for each chromosome (for elegans it is 7, 6 plus m
 **Step 2: samtools**
 
 ```
-module load samtools-1.15.1-gcc-8.2.0
-cat *.sam > HIFIelegans.sam   #concatenate all the sam files into one
-samtools view -b ./HIFIelegans.sam -o ./HIFIelegans.bam
+#!/bin/bash
+#SBATCH --account account_name
+#SBATCH --qos partition_name
+#SBATCH --partition partition_name
+#SBATCH --output=out_%_sam.log
+
+module load samtools-1.9-gcc-8.2.0-o53igvd
+
+ls *.sam > list.txt
+
+while read -r file; do
+    samtools view -b "$file" -o "$file".bam
+done < list.txt
 ```
 
 **Step 3: ccs**
@@ -88,19 +98,31 @@ samtools view -b ./HIFIelegans.sam -o ./HIFIelegans.bam
 module load mamba/23.1.0-4
 source activate pbccs
 
-ccs HIFIelegans.bam HIFIelegans.fastq.gz
+rm list.txt
+
+ls *.bam > list.txt
+
+while read -r file; do
+    ccs "$file" "$file".fastq.gz
+done < list.txt
 ```
 
-**Step 4: repeat** pbsim3, samtools, ccs (steps 1-3) for ecoli, changing the genome from caenorhabditis_elegans.PRJNA13758.WBPS18.genomic.fa
-to GCF_000008865.2_ASM886v2_genomic.fna and output file names from HIFIelegans to HIFIecoli
-
-**Step 5: unzip and concatenate the fastq files together:**
+**Step 4: unzip and concatenate the fastq files together:**
 
 ```
-gunzip HIFIelegans.fastq.gz
-gunzip HIFIecoli.fastq.gz
+gunzip *.fastq
+cat *.fastq > HIFIelegans.fastq
+```
+
+**Step 5: repeat** pbsim3, samtools, ccs (steps 1-3) for ecoli, changing the genome from caenorhabditis_elegans.PRJNA13758.WBPS18.genomic.fa
+to GCF_000008865.2_ASM886v2_genomic.fna and output file name from HIFIelegans.fastq to HIFIecoli.fastq
+
+**Step 6: concatenate the fastq files together:** 
+
+```
 cat HIFIelegans.fastq HIFIecoli.fastq > HIFItestData.fastq
 ```
+
 
 </details>
 
@@ -211,12 +233,12 @@ Again concatenate this with the ecoli data.
 | caenorhabditis_elegans.PRJNA13758.WBPS18.genomic.fa | 98M | 7 |
 | caenorhabditis_elegans.PRJNA13758.WBPS18.CDS_transcripts.fa | 41M | 28,558 |
 | GCF_000008865.2_ASM886v2_genomic.fna | 5.5M | 3 |
-| HIFItestData.fastq | 1.7G | 131,789 |
+| HIFItestData.fastq | NA | NA |
 | ONTtestData.fastq | 12G | 689,630 |
 | IlluminaTestData_1.fastq | 6.3G | 21,176,070 |
 | IlluminaTestData_2.fastq | 6.3G | 21,176,070 |
-| IlluminaRNAtestData_1.fastq | 2.7G | 8,847,030 |
-| IlluminaRNAtestData_2.fastq | 2.7G | 8,847,030 |
+| IlluminaRNAtestData_1.fastq | NA | NA |
+| IlluminaRNAtestData_2.fastq | NA | NA |
 
 </details>
 
@@ -225,12 +247,12 @@ Again concatenate this with the ecoli data.
 
 | file | mean Phred Quality Score | shortest read | longest read | mean read length | GC% |
 |------|--------------------------|---------------|--------------|------------------|-----|
-| HIFItestData.fastq | 80 | 98 | 49,907 | 5000 | 39% |
+| HIFItestData.fastq | NA | NA | NA | NA | NA |
 | ONTtestData.fastq | 14 | 96 | 78,823 | 8000 | 36% |
 | IlluminaTestData_1.fastq | 36 | 150 | 150 | 150 | 36% |
 | IlluminaTestData_2.fastq | 36 | 150 | 150 | 150 | 36% |
-| IlluminaRNAtestData_1.fastq | 36 | 150 | 150 | 150 | 44% |
-| IlluminaRNAtestData_2.fastq | 36 | 150 | 150 | 150 | 44% |
+| IlluminaRNAtestData_1.fastq | NA | NA | NA | NA | NA |
+| IlluminaRNAtestData_2.fastq | NA | NA | NA | NA | NA |
 
   
 </details>
@@ -240,21 +262,6 @@ Again concatenate this with the ecoli data.
 
 <details>
 <summary>hifiasm</summary>
-
-JUST KIDDING :<
-
-When you go to assemble this the assembly is only 20M with 2 contigs??? Let's try using less ecoli sequences by using seqtk to take 100 random sequences:
-
-```
-module load seqtk-1.3
-seqtk sample -s100 HIFIecoli.fastq 100 > subsetHIFIecoli.fastq
-```
-
-OKAY, that didn't work either. 15M file, 1 sequence. Let's try running hifiasm on just the elegans HIFI reads rather than the concatenated reads.
-
-WELP, same result, 15M file, 1 sequence.
-
-Try regenerating HIFI data?
 
 </details>
 
