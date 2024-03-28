@@ -268,7 +268,14 @@ Again concatenate this with the ecoli data.
 
 <details>
 <summary>flye with canu correct</summary>
-  
+
+A genome assembly of ONT reads was created with the ONTtestData.fastq file using flye with the canu correct module as done in https://github.com/vkeggers/DeNovo-Nematode-Pipeline/blob/main/DeNovo-Nematode-Pipeline.md
+
+This assembly was blasted against the nt database and 2 of the 15 contigs hit to _e.coli_, showing that the contaminant reads were incorporated into the genome assembly. This assembly was polished with the IlluminaTestData_1.fastq and IlluminaTestData_2.fastq using pilon, again following  https://github.com/vkeggers/DeNovo-Nematode-Pipeline/blob/main/DeNovo-Nematode-Pipeline.md
+
+The polished genome assembly was again blasted against nt.
+
+
 </details>
 
 
