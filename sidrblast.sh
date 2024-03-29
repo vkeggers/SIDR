@@ -52,4 +52,5 @@ sed -i 's/ /\t/' test6.txt
 echo -e "contig\tMostHits" > MostFrequentBLAST.txt
 sort -k1 test6.txt >> MostFrequentBLAST.txt
 
-
+#remove all temporary files
+rm test*.txt
