@@ -29,7 +29,7 @@ blastn -query ${GENOME} \
 ################################
 ################################
 
-
+#blast results are by default sorted with the most significant e-value occurring first
 awk '/Query=/{print; flag=1; next} flag && /^>/{print; flag=0} flag && /No hits found/{print; flag=0}' out_blastnt.log > test1.txt
 awk 'NR%2==1{col1=$0} NR%2==0{print col1, $0}' test1.txt > test2.txt
 awk '{print $2, $5, $6}' test2.txt > test3.txt
