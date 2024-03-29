@@ -34,8 +34,8 @@ blastn -query ${GENOME} \
 awk '/Query=/{print; flag=1; next} flag && /^>/{print; flag=0} flag && /No hits found/{print; flag=0}' out_blastnt.log > test1.txt
 awk 'NR%2==1{col1=$0} NR%2==0{print col1, $0}' test1.txt > test2.txt
 sed -i 's/PREDICTED: //' test2.txt
+sed -i 's/\*\*\*\*\* No hits found \*\*\*\*\*/> No No_hits_found/g' test2.txt 
 awk '{print $2, $5}' test2.txt > test3.txt
-sed -i 's/hits found/No_hits_found/g' test3.txt
 sed -i 's/ /\t/' test3.txt
 echo -e "contig\tTopHit" > TopHitBLAST.txt
 sort -k1 test3.txt >> TopHitBLAST.txt
@@ -54,3 +54,6 @@ sort -k1 test6.txt >> MostFrequentBLAST.txt
 
 #remove all temporary files
 rm test*.txt
+
+#join the two blast outputs together
+join --check-order --header -t$'\t' TopHitBLAST.txt MostFrequentBLAST.txt > SIDRblast.txt
