@@ -1,26 +1,42 @@
 #!/bin/bash
 
-#SBATCH --account iacc_jfierst
-#SBATCH --qos highmem1
-#SBATCH --partition highmem1
+#SBATCH --account account_name
+#SBATCH --qos qos_name
+#SBATCH --partition partition_name
 #SBATCH --output=out_blastnt.log
 #SBATCH --mail-user=your@email.com
 #SBATCH --mail-type=ALL
+#SBATCH -n 12
 
 module load blast-plus-2.7.1-gcc-8.2.0-fm5yf3k
 
 #makeblastdb -in /home/data/jfierst/veggers/nt_db/nt.fa -dbtype nucl -out nt
 
-GENOME=/home/data/jfierst/veggers/Oscheius/DF5033/DF5033_hifiAssembly/DF5033ONTpb.asm.bp.p_ctg.fa
+GENOME=/home/data/jfierst/SIDR/testData.fasta
 NT=/home/data/jfierst/veggers/nt_db/nt
-BLAST_OUTPUT=/home/data/jfierst/veggers/testData_flye_blast.txt
+SAMPLE=testData
 
-blastn -query ${GENOME} \
-    -db ${NT} \
-   # -outfmt 6 \
-    -culling_limit 5 \
-    -evalue 1e-25 \
-    -out BLASToutput.txt
+
+###############################
+###############################
+###########RUN_BLAST###########
+###############################
+###############################
+
+mkdir ${SAMPLE}_temp
+cd ${SAMPLE}_temp
+
+# Split input FASTA file into subset files each with 10 sequences
+split -d -a 3 -l 10 ${GENOME} subset_
+
+# Run BLAST on each subset
+for file in subset_*; do
+    blastn -query "$file" -db ${NT} -culling_limit 5 -evalue 1e-25 -out "${file}.out" &
+done
+wait
+
+# Combine the results 
+cat subset_*.out > ${SAMPLE}_blast.txt
 
 
 ################################
@@ -31,7 +47,7 @@ blastn -query ${GENOME} \
 
 #blast results are by default sorted with the most significant e-value occurring first
 #get the first blast results for each contig into a list
-awk '/Query=/{print; flag=1; next} flag && /^>/{print; flag=0} flag && /No hits found/{print; flag=0}' ${BLAST_OUTPUT} > temp1.txt
+awk '/Query=/{print; flag=1; next} flag && /^>/{print; flag=0} flag && /No hits found/{print; flag=0}' ${SAMPLE}_blast.txt > temp1.txt
 awk 'NR%2==1{col1=$0} NR%2==0{print col1, $0}' temp1.txt > temp2.txt
 sed -i 's/PREDICTED: //' temp2.txt
 sed -i 's/\*\*\*\*\* No hits found \*\*\*\*\*/> No No_hits_found/g' temp2.txt 
@@ -42,7 +58,8 @@ sort -t_ -k2n temp3.txt >> TopHitBLAST.txt
 
 
 #get the most frequent blast results into a list
-awk '/Query=/{print; flag=1; next} flag && /^>/{print; next} flag && /No hits found/{print; flag=0}' ${BLAST_OUTPUT} > temp1.txt
+#I'm not sure that this is worth keeping because there were no instances when the most hit was Oscheius but the top hit wasn't
+awk '/Query=/{print; flag=1; next} flag && /^>/{print; next} flag && /No hits found/{print; flag=0}' ${SAMPLE}_blast.txt > temp1.txt
 sed 's/PREDICTED: //' temp1.txt > temp2.txt
 awk '/Query=/{print; flag=1; next} flag && /^>/{print $1,$3; next} flag && /No hits found/{print; flag=0}' temp2.txt > temp3.txt
 sed 's/\*\*\*\*\* No hits found \*\*\*\*\*/> No_hits_found/g' temp3.txt > temp4.txt
@@ -56,6 +73,7 @@ sort -t_ -k2n temp6.txt >> MostFrequentBLAST.txt
 rm temp*.txt
 
 #join the two blast outputs together
-join --check-order --header -t$'\t' TopHitBLAST.txt MostFrequentBLAST.txt > SIDRblast.txt
+join --header -t$'\t' TopHitBLAST.txt MostFrequentBLAST.txt > ${SAMPLE}_sidrBlast.txt
 
-#I'm not sure that this is worth keeping because there were no instances when the most hit was Oscheius but the top hit wasn't
+cp ${SAMPLE}_sidrBlast.txt ./../.
+
