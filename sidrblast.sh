@@ -75,5 +75,7 @@ rm temp*.txt
 #join the two blast outputs together
 join --header -t$'\t' TopHitBLAST.txt MostFrequentBLAST.txt > ${SAMPLE}_sidrBlast.txt
 
+cp ${SAMPLE}_blast.txt ./../.
 cp ${SAMPLE}_sidrBlast.txt ./../.
 
+#If no errors have occurred during the run it is recommended to delete the ${SAMPLE}_temp directory
