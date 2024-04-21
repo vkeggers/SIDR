@@ -150,7 +150,12 @@ pbsim --strategy wgs \
 
 repeat w/ e.coli genome and then concatenate all .fastq files together under ONTtestData.fastq
 
+However, this produced assemblies that were too good (very few contigs). So we randomly subsampled the reads using seqtk before concatenating them together. The larger dataset was labeled ONTtestData01 and the subsampled one was labeled ONTtestData02
+
+
 </details>
+
+
 
 
 <details>
