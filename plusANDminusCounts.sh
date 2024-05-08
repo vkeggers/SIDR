@@ -38,25 +38,25 @@ sed -i 's/ /\t/' PB_minus_counts.txt
 #oxford nanopore
 
 echo -e "contig\tONT_plus_counts" > ONT_plus_counts.txt
-samtools view -F 16 ./../samsANDbams/ONTaln_sorted.bam | awk '{if ($3 != contig) {if (contig != "") print contig, count; contig = $3; count = 0} count++} END {if (contig != "") print contig, count}' > ONT_plus_counts.txt
+samtools view -F 16 ./../samsANDbams/ONTaln_sorted.bam | awk '{if ($3 != contig) {if (contig != "") print contig, count; contig = $3; count = 0} count++} END {if (contig != "") print contig, count}' >> ONT_plus_counts.txt
 sed -i 's/ /\t/' ONT_plus_counts.txt
 
 
 echo -e "contig\tONT_minus_counts" > ONT_minus_counts.txt
-samtools view -f 16 ./../samsANDbams/ONTaln_sorted.bam | awk '{if ($3 != contig) {if (contig != "") print contig, count; contig = $3; count = 0} count++} END {if (contig != "") print contig, count}' > ONT_minus_counts.txt
+samtools view -f 16 ./../samsANDbams/ONTaln_sorted.bam | awk '{if ($3 != contig) {if (contig != "") print contig, count; contig = $3; count = 0} count++} END {if (contig != "") print contig, count}' >> ONT_minus_counts.txt
 sed -i 's/ /\t/' ONT_minus_counts.txt
 
 ###########################################################################################################################################
 
 #RNA
 
-echo -e "contig\tONT_plus_counts" > ONT_plus_counts.txt
-samtools view -F 16 ./../samsANDbams/RNAaln_sorted.bam | awk '{if ($3 != contig) {if (contig != "") print contig, count; contig = $3; count = 0} count++} END {if (contig != "") print contig, count}' > RNA_plus_counts.txt
+echo -e "contig\tRNA_plus_counts" > RNA_plus_counts.txt
+samtools view -F 16 ./../samsANDbams/RNAaln_sorted.bam | awk '{if ($3 != contig) {if (contig != "") print contig, count; contig = $3; count = 0} count++} END {if (contig != "") print contig, count}' >> RNA_plus_counts.txt
 sed -i 's/ /\t/' RNA_plus_counts.txt
 
 
 echo -e "contig\tRNA_minus_counts" > RNA_minus_counts.txt
-samtools view -f 16 ./../samsANDbams/RNAaln_sorted.bam | awk '{if ($3 != contig) {if (contig != "") print contig, count; contig = $3; count = 0} count++} END {if (contig != "") print contig, count}' > RNA_minus_counts.txt
+samtools view -f 16 ./../samsANDbams/RNAaln_sorted.bam | awk '{if ($3 != contig) {if (contig != "") print contig, count; contig = $3; count = 0} count++} END {if (contig != "") print contig, count}' >> RNA_minus_counts.txt
 sed -i 's/ /\t/' RNA_minus_counts.txt
 
 ############################################################################################################################################
