@@ -1,13 +1,8 @@
 """
 Created on Thu Feb 01 14:19:06 2024
 @author: vkeggers and virallyDanny
-@description: Compares the EDTA output GFF3 file against the output GFF file of a gene
-              annotation software (such as Braker3) to detect EDTA-predicted TEs found
-              inside predicted gene sequences. These sequences are filtered from the
-              EDTA annotation GFF file and outputted to a rejected_TEs.gff file. The
-              non-conflicting TE prediction are outputted to a filtered_TEs.gff file.
-
-@Usage: EDTA_Gene_Annotation_Comparison.py --EDTA [EDTAoutput.gff] --gene [gene_annotation_output.gff]
+@description: Machine learning (XGBoost) for decontamination of genome assemblies
+@Usage:
 """
 
 import pandas as pd
