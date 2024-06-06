@@ -87,6 +87,24 @@ END {
 }' RNAcoverage.txt >> RNAcoverageStats.txt
 sed -i 's/ /\t/g' RNAcoverageStats.txt
 
+cut -f 1 RNAcoverageStats.txt | sed '1d' | sort > names.temp
+lines_file1=$(wc -l < contig_names.txt)
+lines_file2=$(wc -l < names.temp)
+
+# Check if the number of lines match
+if [ "$lines_file1" -eq "$lines_file2" ]; then
+    echo "complete"
+else
+    echo "The number of lines do not match. Checking for 0 coverage."
+    grep -Fxv -f contig_names.txt names.temp > difference.temp
+    awk '{print $1, "0", "0"}' difference.temp | sed 's/ /\t/g' >> RNAcoverageStats.txt
+    sort RNAcoverageStats.txt > temp
+    mv temp RNAcoverageStats.txt
+    rm difference.temp
+fi
+
+rm names.temp
+
 ####################################################################################################################################
 
 cd ..
