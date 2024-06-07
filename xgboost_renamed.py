@@ -24,9 +24,10 @@ parser = argparse.ArgumentParser(description='XGBoost model to predict the conta
 parser.add_argument('--Genus', type=str, help='Genus of the the species of interest')
 args = parser.parse_args()
 genus = args.Genus
-biasedOutput = pd.DataFrame(columns=[genus, 'Other'])
 
 genus = 'Caenorhabditis'
+
+biasedOutput = pd.DataFrame(columns=[genus, 'Other'])
 
 for i in range(100):
 
@@ -133,10 +134,10 @@ stats[stats['SIDR_predictions'] == 0].to_csv('./results/Removed_SIDR_predictions
 
 # TODO: Remove from graphviz - doesn't work
 # Plot the decision tree using matplotlib
-fig, ax = plt.subplots(figsize=(30, 30))
-xgboost.plot_tree(model, num_trees=0, ax=ax)
-plt.savefig('./figures/tree_plot.png', dpi=1200, bbox_inches='tight')
-plt.close()
+# fig, ax = plt.subplots(figsize=(30, 30))
+# xgboost.plot_tree(model, num_trees=0, ax=ax)
+# plt.savefig('./figures/tree_plot.png', dpi=1200, bbox_inches='tight')
+# plt.close()
 
 # Feature Importance
 feature_importance = model.feature_importances_features = stats.columns
