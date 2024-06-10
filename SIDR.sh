@@ -202,7 +202,7 @@ bash contig_GC.sh
 
 
 #GC percent of contigs
-bash contig_GC.sh
+bash read_GC.sh
 
 
 #plus and minus strand counts
