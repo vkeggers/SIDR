@@ -7,6 +7,7 @@
 #set genome variable
 GENOME=/path/to/genome
 
+mkdir -p stats
 
 cd stats
 
