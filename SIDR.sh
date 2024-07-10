@@ -3,7 +3,7 @@
 #SBATCH --account iacc_jfierst
 #SBATCH --qos highmem1
 #SBATCH --partition highmem1
-#SBATCH -n 8
+#SBATCH -n 12
 #SBATCH --output=out_sidr.log
 #SBATCH --mail-user=vegge003@fiu.edu
 #SBATCH --mail-type=ALL
@@ -146,46 +146,7 @@ if [ "$RUN_BLAST" = "No" ]; then
 ###################################
 ###################################
 
-mkdir samsANDbams
-cd samsANDbams
-
-#pacbio reads aligned to assembly
-minimap2 -ax map-hifi \
-    ${GENOME} \
-    ${HIFI_READS} \
-    -o PBaln.sam
-
-#ONT reads aligned to assembly
-minimap2 -ax map-ont \
-    ${GENOME} \
-    ${ONT_READS} \
-    -o ONTaln.sam
-
-#RNA reads aligned to assembly
-bwa index ${GENOME}
-bwa mem -t 4 ${GENOME} ${FORWARD} ${REVERSE} > RNAaln.sam
-
-
-##############################
-##############################
-########MAKE_BAM_FILES########
-##############################
-##############################
-
-#pacbio hifi
-samtools view -Sb ./PBaln.sam -o ./PBaln.bam
-samtools sort -o ./PBaln_sorted.bam ./PBaln.bam
-samtools index ./PBaln_sorted.bam ./PBaln_index.bai
-
-#oxford nanopore
-samtools view -Sb ./ONTaln.sam -o ./ONTaln.bam
-samtools sort -o ./ONTaln_sorted.bam ./ONTaln.bam
-samtools index ./ONTaln_sorted.bam ./ONTaln_index.bai
-
-#RNA
-samtools view -Sb ./RNAaln.sam -o ./RNAaln.bam
-samtools sort -o ./RNAaln_sorted.bam ./RNAaln.bam
-samtools index ./RNAaln_sorted.bam ./RNAaln_index.bai
+sbatch temp.sh
 
 
 ##############################
@@ -194,16 +155,10 @@ samtools index ./RNAaln_sorted.bam ./RNAaln_index.bai
 ##############################
 ##############################
 
-cd ..
-mkdir stats
+#temp.sh will begin kmers.sh, depth.sh, and readGC.sh
 
 #calculate GC content for reads over contig region
 bash contig_GC.sh
-
-
-#GC percent of contigs
-bash read_GC.sh
-
 
 #plus and minus strand counts
 bash plusANDminusCounts.sh
