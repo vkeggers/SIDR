@@ -1,87 +1,217 @@
 #!/bin/bash
+#SBATCH --account iacc_jfierst
+#SBATCH --qos highmem1
+#SBATCH --partition highmem1
+#SBATCH --output=out_read_GC.log
+#SBATCH --mail-user=vegge003@fiu.edu
 
+
+plusANDminus_start=$(date +%s)
 
 
 #calculate the number of reads on the plus(forward) strand of DNA and minus(reverse) strand
-
-
 
 #load modules
 module load samtools-1.15.1-gcc-8.2.0
 
 
-cd stats
-
 ###########################################################################################################################################
 
 #pacbio hifi
+if [ -n "${HIFI_READS}" ]; then
 
-#titles for columns in the output file
-echo -e "contig\tPB_plus_counts" > PB_plus_counts.txt
+        echo -e "contig\thifi_plus_counts" > ./stats/hifi_plus_counts.txt
 
-#-F means to exclude, 16 is a flag meaning reverse complement, so we are excluding all reads which are associated with the reverse strand of DNA
-#the awk script is looking at the 3rd field (contig name), and if the field matches, it increases the count. If the field does not match (new contig), then
-#it prints the values for contig and count, then resets them. The END is to ensure the last line is processed and printed.
-samtools view -F 16 ./../samsANDbams/PBaln_sorted.bam | awk '{if ($3 != contig) {if (contig != "") print contig, count; contig = $3; count = 0} count++} END
- {if (contig != "") print contig, count}' >> PB_plus_counts.txt
+        max_jobs=12
+        job_count=0
 
-#replaces spaces with tabs, important for concatenating the table together later
-sed -i 's/ /\t/' PB_plus_counts.txt
+        while read -r line; do
 
-#repeat the above but for reverse strand
-echo -e "contig\tPB_minus_counts" > PB_minus_counts.txt
-samtools view -f 16 ./../samsANDbams/PBaln_sorted.bam | awk '{if ($3 != contig) {if (contig != "") print contig, count; contig = $3; count = 0} count++} END {if (contig != "") print contig, count}' >> PB_minus_counts.txt
-sed -i 's/ /\t/' PB_minus_counts.txt
+                samtools view -F 16 ./samsANDbams/hifi_alignments/"${line}"_reads.bam | awk -v line="$line" '{count++; contig=$3} END {if (NR==0) {print line 0} else {print line count}}' >> ./stats/hifi_plus_counts.txt &
+
+                job_count=$((job_count + 1))
+
+                        if [ "$job_count" -ge "$max_jobs" ]; then
+                                wait
+                                job_count=0
+                        fi
+
+        done < contig_names.txt
+
+        wait
+
+        sed -i 's/ /\t/' ./stats/hifi_plus_counts.txt
+
+
+        echo -e "contig\thifi_minus_counts" > ./stats/hifi_minus_counts.txt
+
+        while read -r line; do
+                samtools view -f 16 ./samsANDbams/hifi_alignments/"${line}"_reads.bam | awk -v line="$line" '{count++; contig=$3} END {if (NR==0) {print line 0} else {print line count}}' >> ./stats/hifi_minus_counts.txt &
+
+                job_count=$((job_count + 1))
+
+                        if [ "$job_count" -ge "$max_jobs" ]; then
+                                wait
+                                job_count=0
+                        fi
+
+        done < contig_names.txt
+
+        wait
+
+        sed -i 's/ /\t/' ./stats/hifi_minus_counts.txt
+
+fi
+
 
 ###########################################################################################################################################
 
 #oxford nanopore
+if [ -n "${ONT_READS}" ]; then
 
-echo -e "contig\tONT_plus_counts" > ONT_plus_counts.txt
-samtools view -F 16 ./../samsANDbams/ONTaln_sorted.bam | awk '{if ($3 != contig) {if (contig != "") print contig, count; contig = $3; count = 0} count++} END {if (contig != "") print contig, count}' >> ONT_plus_counts.txt
-sed -i 's/ /\t/' ONT_plus_counts.txt
+        echo -e "contig\tont_plus_counts" > ./stats/ont_plus_counts.txt
+
+        max_jobs=12
+        job_count=0
+
+        while read -r line; do
+
+                samtools view -F 16 ./samsANDbams/ont_alignments/"${line}"_reads.bam | awk -v line="$line" '{count++; contig=$3} END {if (NR==0) {print line 0} else {print line count}}' >> ./stats/ont_plus_counts.txt &
+
+                job_count=$((job_count + 1))
+
+                        if [ "$job_count" -ge "$max_jobs" ]; then
+                                wait
+                                job_count=0
+                        fi
+
+        done < contig_names.txt
+
+        wait
+
+        sed -i 's/ /\t/' ./stats/ont_plus_counts.txt
 
 
-echo -e "contig\tONT_minus_counts" > ONT_minus_counts.txt
-samtools view -f 16 ./../samsANDbams/ONTaln_sorted.bam | awk '{if ($3 != contig) {if (contig != "") print contig, count; contig = $3; count = 0} count++} END {if (contig != "") print contig, count}' >> ONT_minus_counts.txt
-sed -i 's/ /\t/' ONT_minus_counts.txt
+        echo -e "contig\tont_minus_counts" > ./stats/ont_minus_counts.txt
+
+        while read -r line; do
+                samtools view -f 16 ./samsANDbams/ont_alignments/"${line}"_reads.bam | awk -v line="$line" '{count++; contig=$3} END {if (NR==0) {print line 0} else {print line count}}' >> ./stats/ont_minus_counts.txt &
+
+                job_count=$((job_count + 1))
+
+                        if [ "$job_count" -ge "$max_jobs" ]; then
+                                wait
+                                job_count=0
+                        fi
+
+        done < contig_names.txt
+
+        wait
+
+        sed -i 's/ /\t/' ./stats/ont_minus_counts.txt
+
+fi
 
 ###########################################################################################################################################
 
 #RNA
+if [ -n "${RNA_FORWARD}" ]; then
 
-echo -e "contig\tRNA_plus_counts" > RNA_plus_counts.txt
-samtools view -F 16 ./../samsANDbams/RNAaln_sorted.bam | awk '{if ($3 != contig) {if (contig != "") print contig, count; contig = $3; count = 0} count++} END {if (contig != "") print contig, count}' >> RNA_plus_counts.txt
-sed -i 's/ /\t/' RNA_plus_counts.txt
+        echo -e "contig\trna_plus_counts" > ./stats/rna_plus_counts.txt
+
+        max_jobs=12
+        job_count=0
+
+        while read -r line; do
+
+                samtools view -F 16 ./samsANDbams/rna_alignments/"${line}"_reads.bam | awk -v line="$line" '{count++; contig=$3} END {if (NR==0) {print line 0} else {print line count}}' >> ./stats/rna_plus_counts.txt &
+
+                job_count=$((job_count + 1))
+
+                        if [ "$job_count" -ge "$max_jobs" ]; then
+                                wait
+                                job_count=0
+                        fi
+
+        done < contig_names.txt
+
+        wait
+
+        sed -i 's/ /\t/' ./stats/rna_plus_counts.txt
 
 
-echo -e "contig\tRNA_minus_counts" > RNA_minus_counts.txt
-samtools view -f 16 ./../samsANDbams/RNAaln_sorted.bam | awk '{if ($3 != contig) {if (contig != "") print contig, count; contig = $3; count = 0} count++} END {if (contig != "") print contig, count}' >> RNA_minus_counts.txt
-sed -i 's/ /\t/' RNA_minus_counts.txt
+        echo -e "contig\trna_minus_counts" > ./stats/rna_minus_counts.txt
 
-cut -f 1 RNA_plus_counts.txt | sed '1d' | sort > names.temp
-lines_file1=$(wc -l < contig_names.txt)
-lines_file2=$(wc -l < names.temp)
+        while read -r line; do
+                samtools view -f 16 ./samsANDbams/rna_alignments/"${line}"_reads.bam | awk -v line="$line" '{count++; contig=$3} END {if (NR==0) {print line 0} else {print line count}}' >> ./stats/rna_minus_counts.txt &
 
-# Check if the number of lines match
-if [ "$lines_file1" -eq "$lines_file2" ]; then
-    echo "complete"
-else
-    echo "The number of lines do not match. Checking for 0 coverage."
-    grep -Fxv -f contig_names.txt names.temp > difference.temp
-    awk '{print $1, "0", "0"}' difference.temp | sed 's/ /\t/g' >> RNA_plus_counts.txt
-    sort RNA_plus_counts.txt > temp
-    mv temp RNA_plus_counts.txt
+                job_count=$((job_count + 1))
 
-    awk '{print $1, "0", "0"}' difference.temp | sed 's/ /\t/g' >> RNA_minus_counts.txt
-    sort RNA_minus_counts.txt > temp
-    mv temp RNA_minus_counts.txt
-    
-    rm difference.temp
+                        if [ "$job_count" -ge "$max_jobs" ]; then
+                                wait
+                                job_count=0
+                        fi
+
+        done < contig_names.txt
+
+        wait
+
+        sed -i 's/ /\t/' ./stats/rna_minus_counts.txt
+
 fi
-
-rm names.temp
 
 ############################################################################################################################################
 
-cd ..
+#DNA Illumina
+if [ -n "${DNA_FORWARD}" ]; then
+
+        echo -e "contig\tDNA_illumina_plus_counts" > ./stats/DNA_Illumina_plus_counts.txt
+
+        max_jobs=12
+        job_count=0
+
+        while read -r line; do
+
+                samtools view -F 16 ./samsANDbams/DNA_Illumina_alignments/"${line}"_reads.bam | awk -v line="$line" '{count++; contig=$3} END {if (NR==0) {print line 0} else {print line count}}' >> ./stats/DNA_Illumina_plus_counts.txt &
+
+                job_count=$((job_count + 1))
+
+                        if [ "$job_count" -ge "$max_jobs" ]; then
+                                wait
+                                job_count=0
+                        fi
+
+        done < contig_names.txt
+
+        wait
+
+        sed -i 's/ /\t/' ./stats/DNA_Illumina_plus_counts.txt
+
+
+        echo -e "contig\tDNA_Illumina_minus_counts" > ./stats/DNA_Illumina_minus_counts.txt
+
+        while read -r line; do
+                samtools view -f 16 ./samsANDbams/DNA_Illumina_alignments/"${line}"_reads.bam | awk -v line="$line" '{count++; contig=$3} END {if (NR==0) {print line 0} else {print line count}}' >> ./stats/DNA_Illumina_minus_counts.txt &
+
+                job_count=$((job_count + 1))
+
+                        if [ "$job_count" -ge "$max_jobs" ]; then
+                                wait
+                                job_count=0
+                        fi
+
+        done < contig_names.txt
+
+        wait
+
+        sed -i 's/ /\t/' ./stats/DNA_Illumina_minus_counts.txt
+
+fi
+
+############################################################################################################################################
+
+
+plusANDminus_end=$(date +%s)
+plusANDminus_runtime=$((plusANDminus_end - plusANDminus_start))
+plusANDminus_runtime_minutes=$((plusANDminus_runtime / 60))
+echo "plus and minus counts completed in $plusANDminus_runtime_minutes minutes" >> progress.log
